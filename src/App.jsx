@@ -13,7 +13,7 @@ function App() {
     <>
       <BrowserRouter>
         <Navbar />
-        <main className="grow mx-auto py-8 px-4">
+        <main className="grow md:max-w-prose py-8 px-4">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create" element={<Create />} />

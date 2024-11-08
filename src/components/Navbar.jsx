@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <header className="flex px-8 py-4 bg-brand-300 text-inverse">
+    <header className="flex px-8 py-4 bg-brand-300 text-inverse sticky top-0">
       <Link to={"/"} className="grow">
         <h1 className="font-brand text-4xl font-black">Knitr</h1>
       </Link>

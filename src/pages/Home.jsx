@@ -4,7 +4,7 @@ import { faMitten } from "@fortawesome/free-solid-svg-icons";
 const Home = () => {
   return (
     <>
-      <section className="w-full flex flex-col h-full justify-center items-stretch gap-4">
+      <section className="flex flex-col h-full justify-center items-stretch gap-4">
         <FontAwesomeIcon
           icon={faMitten}
           className="text-brand-300 animate-wiggle text-5xl"
