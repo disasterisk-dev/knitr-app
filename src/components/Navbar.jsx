@@ -15,9 +15,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 flex bg-brand-300 px-8 py-4 text-inverse">
-      <Link to={"/"} className="grow">
-        <h1 className="font-brand text-4xl font-black">Knitr</h1>
-      </Link>
+      <h1 className="grow font-brand text-4xl font-black">Knitr</h1>
       <nav className="flex items-center justify-center text-3xl">
         {pathname === "/" && (
           <Link to={"/create"}>

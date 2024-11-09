@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Create from "./pages/Create";
 import { useProjectContext } from "./context/ProjectsContext";
+import Project from "./pages/Project";
 
 function App() {
   const { setProjects } = useProjectContext();
@@ -21,8 +22,9 @@ function App() {
         <Navbar />
         <main className="flex grow flex-col items-stretch gap-4 px-4 py-8">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create" element={<Create />} />
+            <Route exact path="/" element={<Home />} />
+            <Route exact path="/create" element={<Create />} />
+            <Route exact path="/project/:id" element={<Project />} />
           </Routes>
         </main>
       </BrowserRouter>
