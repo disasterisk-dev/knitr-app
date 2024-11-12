@@ -1,16 +1,29 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useProjectContext } from "../context/ProjectsContext";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const {deleteProject} = useProjectContext();
 
   function handleCancelCreate(e) {
     e.preventDefault();
     let check = confirm("Do you want to discard this project?");
 
     if (check) navigate("/");
+  }
+
+  function handleDeleteProject(e) {
+    e.preventDefault();
+    const id = pathname.split("/")[2];
+    console.log(id)
+    
+    if(!confirm("Do you want to permanently delete this project?")) return
+    
+    deleteProject(id);
+    navigate("/")
   }
 
   return (
@@ -24,6 +37,11 @@ const Navbar = () => {
         )}
         {pathname === "/create" && (
           <button onClick={handleCancelCreate}>
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
+        {pathname.split("/")[1] === "project" && (
+          <button onClick={handleDeleteProject}>
             <FontAwesomeIcon icon={faTrash} />
           </button>
         )}

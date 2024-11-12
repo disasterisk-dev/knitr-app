@@ -19,11 +19,12 @@ const ProjectReducer = (state, action) => {
     case "SET":
       return action.payload;
     case "DELETE":
-      // filter out the selected blog
-      return state;
+      let filtered = state.filter((p) => p.id != action.id)
+      
+      if(filtered == []) return null
+      return filtered
     case "CREATE":
       state.push(action.payload);
-      localStorage.setItem("projects", JSON.stringify(state));
     default:
       return state;
   }
@@ -43,6 +44,18 @@ export const ProjectContextProvider = ({ children }) => {
     }
 
     dispatch({ type: "CREATE", payload: project });
+    localStorage.setItem("projects", JSON.stringify(projects));
+  }
+
+  function deleteProject(id){
+    dispatch({type: "DELETE", id: id})
+    
+    if(projects != []){
+      localStorage.setItem("projects", JSON.stringify(projects));
+      return;
+    }
+
+    localStorage.removeItem("projects");
   }
 
   return (
@@ -52,6 +65,7 @@ export const ProjectContextProvider = ({ children }) => {
         activeProject,
         setProjects,
         createProject,
+        deleteProject,
         setActiveProject,
       }}
     >

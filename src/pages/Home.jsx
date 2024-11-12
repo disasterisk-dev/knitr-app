@@ -19,7 +19,7 @@ const Home = () => {
             <h2 className="text-center font-brand text-3xl font-semibold text-subtle">
               Welcome to Knitr!
             </h2>
-            <Link className="text-brand-400 underline" to={"/create"}>
+            <Link className="text-brand-400 underline text-center" to={"/create"}>
               Get started
             </Link>
           </>
@@ -27,7 +27,7 @@ const Home = () => {
         {projects && (
           <>
             {projects.map((p) => (
-              <ProjectCard project={p} />
+              <ProjectCard project={p} key={p.id} />
             ))}
           </>
         )}
