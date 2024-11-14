@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import ColorPicker from "../components/ColorPicker";
 import { useProjectContext } from "../context/ProjectsContext";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
 const Create = () => {
   const [title, setTitle] = useState("");
@@ -12,21 +13,30 @@ const Create = () => {
   const [colors, setColors] = useState([]);
 
   const { createProject } = useProjectContext();
+  const { supabase, session } = useUserContext();
   const navigate = useNavigate();
 
-  const handleCreate = (e) => {
+  const handleCreate = async (e) => {
     e.preventDefault();
 
     const newProject = {
-      id: uuid(),
+      owner: session.user.id,
       title,
       link,
       material,
       weight,
       colors,
+      canvasData: {},
     };
 
-    createProject(newProject);
+    try {
+      const { error } = await supabase.from("projects").insert(newProject);
+
+      if (error) throw Error(error);
+    } catch (e) {
+      console.log(e["code"] + ": " + e["message"]);
+    }
+
     navigate("/");
   };
 

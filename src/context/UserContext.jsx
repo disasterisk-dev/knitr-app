@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const UserContext = createContext();
@@ -16,16 +16,22 @@ export const useUserContext = () => {
 };
 
 const UserContextProvider = ({ children }) => {
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_ANON_KEY,
-  );
+  const [supabase, setSupabase] = useState(null);
+
+  useEffect(() => {
+    let client = createClient(
+      import.meta.env.VITE_SUPABASE_URL,
+      import.meta.env.VITE_SUPABASE_ANON_KEY,
+    );
+
+    setSupabase(client);
+  }, []);
 
   const [session, setSession] = useState(null);
 
   return (
     <UserContext.Provider value={{ supabase, session, setSession }}>
-      {children}
+      {supabase && children}
     </UserContext.Provider>
   );
 };

@@ -4,13 +4,30 @@ import { useProjectContext } from "../context/ProjectsContext";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
+import { useUserContext } from "../context/UserContext";
 
 const Home = () => {
   const { projects, setProjects } = useProjectContext();
+  const { supabase, session } = useUserContext();
+
+  async function getProjects() {
+    const { data, error } = await supabase
+      .from("projects")
+      .select()
+      .eq("owner", session.user.id);
+
+    if (error) return error;
+
+    return data;
+  }
 
   useEffect(() => {
-    const projects = JSON.parse(localStorage.getItem("projects"));
-    setProjects(projects);
+    getProjects().then((p) => {
+      setProjects(p);
+      if (projects.length == 0) {
+        setProjects(null);
+      }
+    });
   }, []);
 
   return (

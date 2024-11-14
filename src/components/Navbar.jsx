@@ -21,14 +21,15 @@ const Navbar = () => {
     if (check) navigate("/");
   }
 
-  function handleDeleteProject(e) {
+  async function handleDeleteProject(e) {
     e.preventDefault();
     const id = pathname.split("/")[2];
     console.log(id);
 
     if (!confirm("Do you want to permanently delete this project?")) return;
 
-    deleteProject(id);
+    const response = await supabase.from("projects").delete().eq("id", id);
+
     navigate("/");
   }
 

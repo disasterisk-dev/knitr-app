@@ -16,9 +16,14 @@ function App() {
   const { supabase, session, setSession } = useUserContext();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    if (!supabase) return;
+
+    supabase.auth.getSession().then(
+      ({ data: { session } }) => {
+        setSession(session);
+      },
+      [supabase],
+    );
 
     const {
       data: { subscription },

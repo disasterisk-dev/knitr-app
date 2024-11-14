@@ -13,13 +13,13 @@ const ProjectCard = ({ project }) => {
         <div className="flex justify-stretch">
           <div className="flex select-none flex-col">
             {project.colors.map((c, i) => (
-                <div
-                key={i}
-                  style={{ backgroundColor: c, color: c }}
-                  className="w-4 grow"
-                >
-                  c
-                </div>
+              <div
+                key={c}
+                style={{ backgroundColor: c, color: c }}
+                className="w-4 grow"
+              >
+                c
+              </div>
             ))}
           </div>
         </div>
