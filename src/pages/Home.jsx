@@ -2,10 +2,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMitten } from "@fortawesome/free-solid-svg-icons";
 import { useProjectContext } from "../context/ProjectsContext";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 
 const Home = () => {
-  const { projects } = useProjectContext();
+  const { projects, setProjects } = useProjectContext();
+
+  useEffect(() => {
+    const projects = JSON.parse(localStorage.getItem("projects"));
+    setProjects(projects);
+  }, []);
 
   return (
     <>
@@ -19,7 +25,10 @@ const Home = () => {
             <h2 className="text-center font-brand text-3xl font-semibold text-subtle">
               Welcome to Knitr!
             </h2>
-            <Link className="text-brand-400 underline text-center" to={"/create"}>
+            <Link
+              className="text-center text-brand-400 underline"
+              to={"/create"}
+            >
               Get started
             </Link>
           </>

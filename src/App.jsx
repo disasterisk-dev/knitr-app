@@ -26,9 +26,6 @@ function App() {
       setSession(session);
     });
     return () => subscription.unsubscribe();
-
-    const projects = JSON.parse(localStorage.getItem("projects"));
-    setProjects(projects);
   }, []);
 
   return (
