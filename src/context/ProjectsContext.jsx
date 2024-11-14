@@ -15,7 +15,7 @@ export const useProjectContext = () => {
 };
 
 export const ProjectContextProvider = ({ children }) => {
-  const [projects, setProjects] = useState(null);
+  const [projects, setProjects] = useState([]);
   const [activeProject, setActiveProject] = useState(null);
 
   return (

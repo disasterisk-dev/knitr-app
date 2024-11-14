@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
 import { useUserContext } from "../context/UserContext";
+import GetStarted from "../components/GetStarted";
 
 const Home = () => {
   const { projects, setProjects } = useProjectContext();
@@ -24,32 +25,13 @@ const Home = () => {
   useEffect(() => {
     getProjects().then((p) => {
       setProjects(p);
-      if (projects.length == 0) {
-        setProjects(null);
-      }
     });
   }, []);
 
   return (
     <>
       <section className="flex h-full grow flex-col items-stretch justify-center gap-4">
-        {!projects && (
-          <>
-            <FontAwesomeIcon
-              icon={faMitten}
-              className="animate-wiggle text-5xl text-brand-300"
-            />
-            <h2 className="text-center font-brand text-3xl font-semibold text-subtle">
-              Welcome to Knitr!
-            </h2>
-            <Link
-              className="text-center text-brand-400 underline"
-              to={"/create"}
-            >
-              Get started
-            </Link>
-          </>
-        )}
+        {projects.length == 0 && <GetStarted />}
         {projects && (
           <>
             {projects.map((p) => (
