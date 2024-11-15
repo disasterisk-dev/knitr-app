@@ -1,4 +1,5 @@
 import { createContext, useReducer, useState, useContext } from "react";
+import { useUserContext } from "./UserContext";
 
 const ProjectContext = createContext();
 
@@ -18,6 +19,20 @@ export const ProjectContextProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [activeProject, setActiveProject] = useState(null);
 
+  const { supabase } = useUserContext();
+
+  async function deleteProject() {
+    const response = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", activeProject.id);
+    return response;
+  }
+
+  async function saveActiveProject() {
+    pass;
+  }
+
   return (
     <ProjectContext.Provider
       value={{
@@ -25,6 +40,7 @@ export const ProjectContextProvider = ({ children }) => {
         activeProject,
         setProjects,
         setActiveProject,
+        deleteProject,
       }}
     >
       {children}
