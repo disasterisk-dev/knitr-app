@@ -13,6 +13,7 @@ const Project = () => {
   const [project, setProject] = useState();
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
+  const [changes, setChanges] = useState(false);
 
   const material = ["Acrylic", "Wool", "Merino"];
   const weight = ["DK", "Aran", "Baby", "Chunky"];
@@ -50,6 +51,15 @@ const Project = () => {
 
   function copyColor(c) {
     navigator.clipboard.writeText(c);
+  }
+
+  function checkChanges() {
+    if (notes == project.notes && progress == project.progress) {
+      setChanges(false);
+      return false;
+    }
+    setChanges(true);
+    return true;
   }
 
   return (
@@ -92,13 +102,19 @@ const Project = () => {
                 className="grow"
                 type="range"
                 value={progress}
-                onChange={(e) => setProgress(e.target.value)}
+                onChange={(e) => {
+                  setProgress(e.target.value);
+                  checkChanges();
+                }}
               />
               <span>{"(" + progress + "%)"}</span>
             </div>
             <textarea
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                checkChanges();
+              }}
               className="grow resize-none overflow-y-auto rounded-inner bg-inverse-subtle p-2"
               name=""
               id=""
@@ -107,7 +123,10 @@ const Project = () => {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={handleSave}
-                className="flex grow basis-full items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
+                disabled={!changes}
+                className={
+                  "flex grow basis-full items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white disabled:bg-brand-100"
+                }
               >
                 <FontAwesomeIcon icon={faFloppyDisk} />
                 Save Changes
