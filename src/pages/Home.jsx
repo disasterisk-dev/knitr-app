@@ -30,7 +30,7 @@ const Home = () => {
 
   return (
     <>
-      <section className="flex h-full grow flex-col items-stretch justify-center gap-4">
+      <section className="flex h-full grow flex-col items-stretch gap-4">
         {projects.length == 0 && <GetStarted />}
         {projects && (
           <>

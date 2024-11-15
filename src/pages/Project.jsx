@@ -99,7 +99,7 @@ const Project = () => {
             <div className="flex items-center gap-2">
               <span>Progress</span>
               <input
-                className="grow"
+                className="grow accent-brand-400"
                 type="range"
                 value={progress}
                 onChange={(e) => {
