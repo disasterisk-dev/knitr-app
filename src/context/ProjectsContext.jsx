@@ -21,6 +21,9 @@ export const ProjectContextProvider = ({ children }) => {
 
   const { supabase } = useUserContext();
 
+  const materials = ["Acrylic", "Wool", "Merino"];
+  const weights = ["DK", "Aran", "Baby", "Chunky"];
+
   async function deleteProject() {
     const response = await supabase
       .from("projects")
@@ -41,6 +44,8 @@ export const ProjectContextProvider = ({ children }) => {
         setProjects,
         setActiveProject,
         deleteProject,
+        materials,
+        weights,
       }}
     >
       {children}

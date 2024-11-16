@@ -7,16 +7,14 @@ import { useUserContext } from "../context/UserContext";
 
 const Project = () => {
   const { id } = useParams();
-  const { projects, setActiveProject } = useProjectContext();
+  const { projects, setActiveProject, materials, weights } =
+    useProjectContext();
   const { supabase, session } = useUserContext();
 
   const [project, setProject] = useState();
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
-
-  const material = ["Acrylic", "Wool", "Merino"];
-  const weight = ["DK", "Aran", "Baby", "Chunky"];
 
   useEffect(() => {
     if (!projects) return;
@@ -76,7 +74,7 @@ const Project = () => {
                 <span>
                   in{" "}
                   <span className="text-xl font-semibold text-subtle">
-                    {weight[project.weight]} {material[project.material]}
+                    {weights[project.weight]} {materials[project.material]}
                   </span>
                 </span>
                 <div className="flex flex-wrap gap-2">

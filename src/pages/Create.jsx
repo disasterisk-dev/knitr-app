@@ -12,7 +12,7 @@ const Create = () => {
   const [weight, setWeight] = useState(0);
   const [colors, setColors] = useState([]);
 
-  const { createProject } = useProjectContext();
+  const { createProject, materials, weights } = useProjectContext();
   const { supabase, session } = useUserContext();
   const navigate = useNavigate();
 
@@ -70,9 +70,9 @@ const Create = () => {
           defaultValue={material}
           onChange={(e) => setMaterial(Number(e.target.value))}
         >
-          <option value={0}>Acrylic</option>
-          <option value={1}>Wool</option>
-          <option value={2}>Merino</option>
+          {materials.map((m, i) => (
+            <option value={i}>{m}</option>
+          ))}
         </select>
 
         <label htmlFor="weight">Weight</label>
@@ -83,10 +83,9 @@ const Create = () => {
           defaultValue={weight}
           onChange={(e) => setWeight(Number(e.target.value))}
         >
-          <option value={0}>DK</option>
-          <option value={1}>Aran</option>
-          <option value={2}>Baby</option>
-          <option value={3}>Chunky</option>
+          {weights.map((w, i) => (
+            <option value={i}>{w}</option>
+          ))}
         </select>
 
         <label htmlFor="colors">Palette</label>
