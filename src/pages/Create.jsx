@@ -26,7 +26,6 @@ const Create = () => {
       material,
       weight,
       colors,
-      canvasData: {},
     };
 
     try {
