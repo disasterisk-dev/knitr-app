@@ -18,7 +18,7 @@ export default {
         inverse: "#FDFDFD",
       },
       fontFamily: {
-        brand: ["Poppins", "serif"],
+        brand: ["Poppins", "sans-serif"],
         body: ["Open Sans", "sans-serif"],
       },
       borderRadius: {
