@@ -24,7 +24,7 @@ const Draw = () => {
 
   const [height, setHeight] = useState(300);
   const [strokeWidth, setStrokeWidth] = useState(5);
-  const [strokeColor, setStrokeColor] = useState("#000");
+  const [strokeColor, setStrokeColor] = useState(null);
   const [erase, setErase] = useState(true);
   const [canvasData, setCanvasData] = useState();
 
@@ -41,7 +41,9 @@ const Draw = () => {
     setActiveProject(p[0]);
 
     if (activeProject) {
-      setStrokeColor(activeProject.colors[0]);
+      if (!strokeColor) {
+        setStrokeColor(activeProject.colors[0]);
+      }
 
       const getHeight = document
         .getElementById("canvas-container")
@@ -145,7 +147,6 @@ const Draw = () => {
           <div className="absolute right-4 top-1/2 flex flex-col gap-2">
             {activeProject.colors.map((c) => (
               <button
-                key={c}
                 onClick={() => setStrokeColor(c)}
                 className="border-1 aspect-square h-6 rounded-full"
                 style={{ backgroundColor: c }}
