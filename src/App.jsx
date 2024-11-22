@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
@@ -13,7 +11,6 @@ import { useUserContext } from "./context/UserContext";
 import Draw from "./pages/Draw";
 
 function App() {
-  const { setProjects } = useProjectContext();
   const { supabase, session, setSession } = useUserContext();
 
   useEffect(() => {
@@ -32,7 +29,7 @@ function App() {
       setSession(session);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [setSession, supabase]);
 
   return (
     <>

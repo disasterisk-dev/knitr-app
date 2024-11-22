@@ -7,8 +7,15 @@ import { useUserContext } from "../context/UserContext";
 
 const Project = () => {
   const { id } = useParams();
-  const { projects, setActiveProject, materials, weights } =
-    useProjectContext();
+  const {
+    projects,
+    fetchProject,
+    setProjects,
+    activeProject,
+    setActiveProject,
+    materials,
+    weights,
+  } = useProjectContext();
   const { supabase, session } = useUserContext();
 
   const [project, setProject] = useState();
@@ -17,7 +24,11 @@ const Project = () => {
   const [changes, setChanges] = useState(false);
 
   useEffect(() => {
-    if (!projects) return;
+    if (projects.length == 0) {
+      fetchProject(id).then((p) => {
+        setProjects(p);
+      });
+    }
 
     let p = projects.filter((p) => p.id == id);
     setProject(p[0]);

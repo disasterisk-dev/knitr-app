@@ -12,7 +12,7 @@ import { useUserContext } from "../context/UserContext";
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { activeProject, deleteProject } = useProjectContext();
+  const { deleteProject } = useProjectContext();
   const { supabase, session } = useUserContext();
 
   function handleCancelCreate(e) {
@@ -29,7 +29,7 @@ const Navbar = () => {
 
     if (!confirm("Do you want to permanently delete this project?")) return;
 
-    const response = deleteProject();
+    deleteProject();
 
     navigate("/");
   }

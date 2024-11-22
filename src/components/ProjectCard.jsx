@@ -2,16 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useProjectContext } from "../context/ProjectsContext";
 
 const ProjectCard = ({ project }) => {
-  const navigate = useNavigate();
-  const { setActiveProject } = useProjectContext();
-
-  function handleOpen() {
-    setActiveProject(project);
-    navigate("/project/" + project.id);
-  }
-
   return (
-    <button onClick={handleOpen}>
+    <Link to={"/project/" + project.id}>
       <div className="flex overflow-hidden rounded-outer bg-inverse-subtle">
         <div>
           <img src="https://dummyjson.com/image/100x150" alt="" />
@@ -33,7 +25,7 @@ const ProjectCard = ({ project }) => {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 };
 

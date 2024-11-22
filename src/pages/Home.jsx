@@ -8,22 +8,11 @@ import { useUserContext } from "../context/UserContext";
 import GetStarted from "../components/GetStarted";
 
 const Home = () => {
-  const { projects, setProjects } = useProjectContext();
+  const { projects, setProjects, fetchProjectsAll } = useProjectContext();
   const { supabase, session } = useUserContext();
 
-  async function getProjects() {
-    const { data, error } = await supabase
-      .from("projects")
-      .select()
-      .eq("owner", session.user.id);
-
-    if (error) return error;
-
-    return data;
-  }
-
   useEffect(() => {
-    getProjects().then((p) => {
+    fetchProjectsAll().then((p) => {
       setProjects(p);
     });
   }, []);

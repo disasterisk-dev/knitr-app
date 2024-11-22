@@ -8,7 +8,7 @@ const ColorPicker = ({ colors, setColors }) => {
   const [currentColor, setCurrentColor] = useState("#ffffff");
   const [width, setWidth] = useState("300px");
 
-  const handleColor = (color, event) => {
+  const handleColor = (color) => {
     setCurrentColor(color.hex);
     const newColors = colors;
     newColors.push(color.hex);
