@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { v4 as uuid } from "uuid";
 import ColorPicker from "../components/ColorPicker";
 import { useProjectContext } from "../context/ProjectsContext";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ const Create = () => {
   const [weight, setWeight] = useState(0);
   const [colors, setColors] = useState([]);
 
-  const { createProject, materials, weights } = useProjectContext();
+  const { materials, weights } = useProjectContext();
   const { supabase, session } = useUserContext();
   const navigate = useNavigate();
 
@@ -70,7 +69,9 @@ const Create = () => {
           onChange={(e) => setMaterial(Number(e.target.value))}
         >
           {materials.map((m, i) => (
-            <option value={i}>{m}</option>
+            <option value={i} key={m}>
+              {m}
+            </option>
           ))}
         </select>
 
@@ -83,7 +84,9 @@ const Create = () => {
           onChange={(e) => setWeight(Number(e.target.value))}
         >
           {weights.map((w, i) => (
-            <option value={i}>{w}</option>
+            <option value={i} key={w}>
+              {w}
+            </option>
           ))}
         </select>
 

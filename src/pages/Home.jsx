@@ -1,21 +1,16 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMitten } from "@fortawesome/free-solid-svg-icons";
 import { useProjectContext } from "../context/ProjectsContext";
-import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import ProjectCard from "../components/ProjectCard";
-import { useUserContext } from "../context/UserContext";
 import GetStarted from "../components/GetStarted";
 
 const Home = () => {
   const { projects, setProjects, fetchProjectsAll } = useProjectContext();
-  const { supabase, session } = useUserContext();
 
   useEffect(() => {
     fetchProjectsAll().then((p) => {
       setProjects(p);
     });
-  }, []);
+  }, [fetchProjectsAll, setProjects]);
 
   return (
     <>

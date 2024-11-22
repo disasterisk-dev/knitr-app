@@ -1,5 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
+import { Link } from "react-router-dom";
 
 const ProjectCard = ({ project }) => {
   return (
@@ -13,7 +12,7 @@ const ProjectCard = ({ project }) => {
         </div>
         <div className="flex justify-stretch">
           <div className="flex select-none flex-col">
-            {project.colors.map((c, i) => (
+            {project.colors.map((c) => (
               <div
                 key={c}
                 style={{ backgroundColor: c, color: c }}

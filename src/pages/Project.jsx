@@ -11,12 +11,11 @@ const Project = () => {
     projects,
     fetchProject,
     setProjects,
-    activeProject,
     setActiveProject,
     materials,
     weights,
   } = useProjectContext();
-  const { supabase, session } = useUserContext();
+  const { supabase } = useUserContext();
 
   const [project, setProject] = useState();
   const [notes, setNotes] = useState("");
@@ -43,7 +42,7 @@ const Project = () => {
     if (project.progress) {
       setProgress(project.progress);
     }
-  }, [id, projects, project]);
+  }, [id, projects, project, fetchProject, setActiveProject, setProjects]);
 
   async function handleSave() {
     const { error } = await supabase

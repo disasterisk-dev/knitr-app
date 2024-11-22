@@ -53,7 +53,15 @@ const Draw = () => {
         canvasRef.current.loadPaths(data);
       }
     }
-  }, [activeProject, projects]);
+  }, [
+    activeProject,
+    projects,
+    id,
+    canvasRef,
+    fetchProject,
+    setActiveProject,
+    setProjects,
+  ]);
 
   function handleErase() {
     setErase(erase ? false : true);
@@ -137,6 +145,7 @@ const Draw = () => {
           <div className="absolute right-4 top-1/2 flex flex-col gap-2">
             {activeProject.colors.map((c) => (
               <button
+                key={c}
                 onClick={() => setStrokeColor(c)}
                 className="border-1 aspect-square h-6 rounded-full"
                 style={{ backgroundColor: c }}

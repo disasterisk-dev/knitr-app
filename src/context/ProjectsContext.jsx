@@ -1,4 +1,4 @@
-import { createContext, useReducer, useState, useContext } from "react";
+import { createContext, useState, useContext } from "react";
 import { useUserContext } from "./UserContext";
 
 const ProjectContext = createContext();
