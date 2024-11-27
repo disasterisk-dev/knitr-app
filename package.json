@@ -21,11 +21,9 @@
     "hex-rgb": "^5.0.0",
     "react": "^18.3.1",
     "react-color": "^2.19.3",
-    "react-color-palette": "^7.3.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0",
-    "react-sketch-canvas": "^6.2.0",
-    "uuid": "^11.0.2"
+    "react-sketch-canvas": "^6.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

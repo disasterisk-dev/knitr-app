@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Create from "./pages/Create";
-import { useProjectContext } from "./context/ProjectsContext";
 import Project from "./pages/Project";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -13,7 +10,6 @@ import { useUserContext } from "./context/UserContext";
 import Draw from "./pages/Draw";
 
 function App() {
-  const { setProjects } = useProjectContext();
   const { supabase, session, setSession } = useUserContext();
 
   useEffect(() => {
@@ -32,7 +28,7 @@ function App() {
       setSession(session);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [setSession, supabase]);
 
   return (
     <>

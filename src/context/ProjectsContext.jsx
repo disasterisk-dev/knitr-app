@@ -1,4 +1,4 @@
-import { createContext, useReducer, useState, useContext } from "react";
+import { createContext, useState, useContext } from "react";
 import { useUserContext } from "./UserContext";
 
 const ProjectContext = createContext();
@@ -19,7 +19,7 @@ export const ProjectContextProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [activeProject, setActiveProject] = useState(null);
 
-  const { supabase } = useUserContext();
+  const { supabase, session } = useUserContext();
 
   const materials = ["Acrylic", "Wool", "Merino"];
   const weights = ["DK", "Aran", "Baby", "Chunky"];
@@ -32,8 +32,27 @@ export const ProjectContextProvider = ({ children }) => {
     return response;
   }
 
-  async function saveActiveProject() {
-    pass;
+  async function fetchProjectsAll() {
+    const { data, error } = await supabase
+      .from("projects")
+      .select()
+      .eq("owner", session.user.id);
+
+    if (error) return error;
+
+    return data;
+  }
+
+  async function fetchProject(id) {
+    const { data, error } = await supabase
+      .from("projects")
+      .select()
+      .eq("owner", session.user.id)
+      .eq("id", id);
+
+    if (error) return error;
+
+    return data;
   }
 
   return (
@@ -42,6 +61,8 @@ export const ProjectContextProvider = ({ children }) => {
         projects,
         activeProject,
         setProjects,
+        fetchProjectsAll,
+        fetchProject,
         setActiveProject,
         deleteProject,
         materials,

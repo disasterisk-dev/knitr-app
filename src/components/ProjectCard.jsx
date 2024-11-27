@@ -1,17 +1,8 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
+import { Link } from "react-router-dom";
 
 const ProjectCard = ({ project }) => {
-  const navigate = useNavigate();
-  const { setActiveProject } = useProjectContext();
-
-  function handleOpen() {
-    setActiveProject(project);
-    navigate("/project/" + project.id);
-  }
-
   return (
-    <button onClick={handleOpen}>
+    <Link to={"/project/" + project.id}>
       <div className="flex overflow-hidden rounded-outer bg-inverse-subtle">
         <div>
           <img src="https://dummyjson.com/image/100x150" alt="" />
@@ -21,7 +12,7 @@ const ProjectCard = ({ project }) => {
         </div>
         <div className="flex justify-stretch">
           <div className="flex select-none flex-col">
-            {project.colors.map((c, i) => (
+            {project.colors.map((c) => (
               <div
                 key={c}
                 style={{ backgroundColor: c, color: c }}
@@ -33,7 +24,7 @@ const ProjectCard = ({ project }) => {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 };
 

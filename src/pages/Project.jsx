@@ -4,20 +4,34 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faFloppyDisk, faPen } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../context/UserContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Project = () => {
   const { id } = useParams();
-  const { projects, setActiveProject, materials, weights } =
-    useProjectContext();
-  const { supabase, session } = useUserContext();
+  const {
+    projects,
+    fetchProject,
+    setProjects,
+    setActiveProject,
+    materials,
+    weights,
+  } = useProjectContext();
+  const { supabase } = useUserContext();
 
   const [project, setProject] = useState();
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!projects) return;
+    setIsLoading(true);
+    if (projects.length == 0) {
+      fetchProject(id).then((p) => {
+        setProjects(p);
+        setIsLoading(false);
+      });
+    }
 
     let p = projects.filter((p) => p.id == id);
     setProject(p[0]);
@@ -32,7 +46,7 @@ const Project = () => {
     if (project.progress) {
       setProgress(project.progress);
     }
-  }, [id, projects, project]);
+  }, [id, projects, project, fetchProject, setActiveProject, setProjects]);
 
   async function handleSave() {
     const { error } = await supabase
@@ -62,6 +76,7 @@ const Project = () => {
 
   return (
     <>
+      {isLoading && !project && <LoadingSpinner />}
       {project && (
         <>
           <section className="flex grow flex-col gap-4">

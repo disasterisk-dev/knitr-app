@@ -1,37 +1,25 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMitten } from "@fortawesome/free-solid-svg-icons";
 import { useProjectContext } from "../context/ProjectsContext";
-import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ProjectCard from "../components/ProjectCard";
-import { useUserContext } from "../context/UserContext";
 import GetStarted from "../components/GetStarted";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Home = () => {
-  const { projects, setProjects } = useProjectContext();
-  const { supabase, session } = useUserContext();
-
-  async function getProjects() {
-    const { data, error } = await supabase
-      .from("projects")
-      .select()
-      .eq("owner", session.user.id);
-
-    if (error) return error;
-
-    return data;
-  }
+  const { projects, setProjects, fetchProjectsAll } = useProjectContext();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getProjects().then((p) => {
+    fetchProjectsAll().then((p) => {
       setProjects(p);
+      setIsLoading(false);
     });
-  }, []);
+  }, [fetchProjectsAll, setProjects]);
 
   return (
     <>
       <section className="flex h-full grow flex-col items-stretch gap-4">
-        {projects.length == 0 && <GetStarted />}
+        {projects.length == 0 && !isLoading && <GetStarted />}
+        {isLoading && <LoadingSpinner />}
         {projects && (
           <>
             {projects.map((p) => (
