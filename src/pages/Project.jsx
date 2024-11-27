@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faFloppyDisk, faPen } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../context/UserContext";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Project = () => {
   const { id } = useParams();
@@ -21,11 +22,14 @@ const Project = () => {
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     if (projects.length == 0) {
       fetchProject(id).then((p) => {
         setProjects(p);
+        setIsLoading(false);
       });
     }
 
@@ -72,6 +76,7 @@ const Project = () => {
 
   return (
     <>
+      {isLoading && !project && <LoadingSpinner />}
       {project && (
         <>
           <section className="flex grow flex-col gap-4">
