@@ -16,7 +16,7 @@ export const useProjectContext = () => {
 };
 
 export const ProjectContextProvider = ({ children }) => {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(null);
   const [activeProject, setActiveProject] = useState(null);
 
   const { supabase, session } = useUserContext();

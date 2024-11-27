@@ -18,9 +18,9 @@ const Home = () => {
   return (
     <>
       <section className="flex h-full grow flex-col items-stretch gap-4">
-        {projects.length == 0 && !isLoading && <GetStarted />}
-        {isLoading && <LoadingSpinner />}
-        {projects && (
+        {!projects && !isLoading && <GetStarted />}
+        {isLoading && !projects && <LoadingSpinner />}
+        {projects && projects.length > 0 && (
           <>
             {projects.map((p) => (
               <ProjectCard project={p} key={p.id} />
