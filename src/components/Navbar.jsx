@@ -6,13 +6,11 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
 import { useUserContext } from "../context/UserContext";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { deleteProject } = useProjectContext();
   const { supabase, session } = useUserContext();
 
   function handleCancelCreate(e) {
@@ -29,7 +27,7 @@ const Navbar = () => {
 
     if (!confirm("Do you want to permanently delete this project?")) return;
 
-    deleteProject();
+    const response = await supabase.from("projects").delete().eq("id", id);
 
     navigate("/");
   }

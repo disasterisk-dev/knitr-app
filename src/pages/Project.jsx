@@ -1,52 +1,48 @@
 import { Link, useParams } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faFloppyDisk, faPen } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../context/UserContext";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+const materials = ["Acrylic", "Wool", "Merino"];
+const weights = ["DK", "Aran", "Baby", "Chunky"];
 
 const Project = () => {
+  const queryClient = useQueryClient();
   const { id } = useParams();
-  const {
-    projects,
-    fetchProject,
-    setProjects,
-    setActiveProject,
-    materials,
-    weights,
-  } = useProjectContext();
-  const { supabase } = useUserContext();
+  const { supabase, session } = useUserContext();
 
-  const [project, setProject] = useState();
+  const [project, setProject] = useState(null);
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["activeProject"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select()
+        .eq("owner", session.user.id)
+        .eq("id", id);
+
+      return data[0];
+    },
+  });
 
   useEffect(() => {
-    setIsLoading(true);
-    if (projects.length == 0) {
-      fetchProject(id).then((p) => {
-        setProjects(p);
-        setIsLoading(false);
-      });
+    if (!data) return;
+
+    if (data.notes) {
+      setNotes(data.notes);
     }
 
-    let p = projects.filter((p) => p.id == id);
-    setProject(p[0]);
-    setActiveProject(p[0]);
-
-    if (!project) return;
-
-    if (project.notes) {
-      setNotes(project.notes);
+    if (data.progress) {
+      setProgress(data.progress);
     }
-
-    if (project.progress) {
-      setProgress(project.progress);
-    }
-  }, [id, projects, project, fetchProject, setActiveProject, setProjects]);
+  }, [data]);
 
   async function handleSave() {
     const { error } = await supabase
@@ -76,8 +72,9 @@ const Project = () => {
 
   return (
     <>
-      {isLoading && !project && <LoadingSpinner />}
-      {project && (
+      {isError && <p>Something went wrong: {error}</p>}
+      {isLoading && !data && <LoadingSpinner />}
+      {data && (
         <>
           <section className="flex grow flex-col gap-4">
             <div className="flex gap-2">
@@ -85,15 +82,15 @@ const Project = () => {
                 <img src="https://dummyjson.com/image/150" alt="" />
               </div>
               <div className="flex grow flex-col gap-2">
-                <h2 className="text-2xl font-bold">{project.title}</h2>
+                <h2 className="text-2xl font-bold">{data.title}</h2>
                 <span>
                   in{" "}
                   <span className="text-xl font-semibold text-subtle">
-                    {weights[project.weight]} {materials[project.material]}
+                    {weights[data.weight]} {materials[data.material]}
                   </span>
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {project.colors.map((c) => (
+                  {data.colors.map((c) => (
                     <button
                       onClick={() => copyColor(c)}
                       className="flex items-center gap-1 rounded-full bg-inverse-subtle px-1.5 py-1 text-xs"
@@ -146,14 +143,14 @@ const Project = () => {
               </button>
               <a
                 className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
-                href={project.link}
+                href={data.link}
                 target="_blank"
               >
                 <FontAwesomeIcon icon={faFile} />
                 Pattern
               </a>
               <Link
-                to={"/draw/" + project.id}
+                to={"/draw/" + data.id}
                 className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
               >
                 <FontAwesomeIcon icon={faPen} />

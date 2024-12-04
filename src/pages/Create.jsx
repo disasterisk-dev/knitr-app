@@ -1,8 +1,10 @@
 import { useState } from "react";
 import ColorPicker from "../components/ColorPicker";
-import { useProjectContext } from "../context/ProjectsContext";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
+
+const materials = ["Acrylic", "Wool", "Merino"];
+const weights = ["DK", "Aran", "Baby", "Chunky"];
 
 const Create = () => {
   const [title, setTitle] = useState("");
@@ -11,7 +13,6 @@ const Create = () => {
   const [weight, setWeight] = useState(0);
   const [colors, setColors] = useState([]);
 
-  const { materials, weights } = useProjectContext();
   const { supabase, session } = useUserContext();
   const navigate = useNavigate();
 
