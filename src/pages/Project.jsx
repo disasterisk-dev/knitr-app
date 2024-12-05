@@ -14,12 +14,16 @@ const Project = () => {
   const { id } = useParams();
   const { supabase, session } = useUserContext();
 
-  const [project, setProject] = useState(null);
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
 
-  const { data, isLoading, isError, error } = useQuery({
+  const {
+    data: project,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["activeProject"],
     queryFn: async () => {
       const { data } = await supabase
@@ -32,17 +36,35 @@ const Project = () => {
     },
   });
 
+  const { data: imgUrl } = useQuery({
+    queryKey: ["imgUrl" + id],
+    queryFn: async () => {
+      if (!project.thumbnailUrl) return Error();
+
+      const { data, error } = await supabase.storage
+        .from("thumbnails")
+        .createSignedUrl("/" + project.thumbnailUrl, 3600);
+
+      if (error) return error;
+
+      return data.signedUrl;
+    },
+    enabled: !!project,
+  });
+
   useEffect(() => {
-    if (!data) return;
+    if (!project) return;
 
-    if (data.notes) {
-      setNotes(data.notes);
+    if (project.notes) {
+      setNotes(project.notes);
+    } else {
+      setNotes("");
     }
 
-    if (data.progress) {
-      setProgress(data.progress);
+    if (project.progress) {
+      setProgress(project.progress);
     }
-  }, [data]);
+  }, [project]);
 
   async function handleSave() {
     const { error } = await supabase
@@ -73,24 +95,27 @@ const Project = () => {
   return (
     <>
       {isError && <p>Something went wrong: {error}</p>}
-      {isLoading && !data && <LoadingSpinner />}
-      {data && (
+      {isLoading && !project && <LoadingSpinner />}
+      {project && (
         <>
           <section className="flex grow flex-col gap-4">
             <div className="flex gap-2">
               <div>
-                <img src="https://dummyjson.com/image/150" alt="" />
+                {isLoading && (
+                  <img src="https://dummyjson.com/image/150" alt="" />
+                )}
+                {imgUrl && <img className="max-w-24" src={imgUrl} alt="" />}
               </div>
               <div className="flex grow flex-col gap-2">
-                <h2 className="text-2xl font-bold">{data.title}</h2>
+                <h2 className="text-2xl font-bold">{project.title}</h2>
                 <span>
                   in{" "}
                   <span className="text-xl font-semibold text-subtle">
-                    {weights[data.weight]} {materials[data.material]}
+                    {weights[project.weight]} {materials[project.material]}
                   </span>
                 </span>
                 <div className="flex flex-wrap gap-2">
-                  {data.colors.map((c) => (
+                  {project.colors.map((c) => (
                     <button
                       onClick={() => copyColor(c)}
                       className="flex items-center gap-1 rounded-full bg-inverse-subtle px-1.5 py-1 text-xs"
@@ -125,7 +150,7 @@ const Project = () => {
                 setNotes(e.target.value);
                 checkChanges();
               }}
-              className="grow resize-none overflow-y-auto rounded-inner bg-inverse-subtle p-2"
+              className="grow resize-none overflow-y-auto rounded-inner bg-inverse-subtle p-2 outline-none"
               name=""
               id=""
               placeholder="Write notes about this project here..."
@@ -141,16 +166,18 @@ const Project = () => {
                 <FontAwesomeIcon icon={faFloppyDisk} />
                 Save Changes
               </button>
-              <a
-                className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
-                href={data.link}
-                target="_blank"
-              >
-                <FontAwesomeIcon icon={faFile} />
-                Pattern
-              </a>
+              {project.pattern && (
+                <a
+                  className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
+                  href={project.link}
+                  target="_blank"
+                >
+                  <FontAwesomeIcon icon={faFile} />
+                  Pattern
+                </a>
+              )}
               <Link
-                to={"/draw/" + data.id}
+                to={"/draw/" + project.id}
                 className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
               >
                 <FontAwesomeIcon icon={faPen} />

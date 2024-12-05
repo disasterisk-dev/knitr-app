@@ -34,7 +34,7 @@ function App() {
     <>
       <BrowserRouter>
         <Navbar />
-        <main className="flex grow flex-col items-stretch gap-4 px-4 py-8">
+        <main className="flex w-full grow flex-col items-stretch gap-4 overflow-y-auto px-4 py-8 md:w-1/2">
           {!session && (
             <Auth
               supabaseClient={supabase}

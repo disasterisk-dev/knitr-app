@@ -41,7 +41,7 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 flex gap-2 bg-brand-300 p-4 font-brand text-2xl text-inverse">
+    <header className="sticky top-0 z-50 flex w-full gap-2 bg-brand-300 p-4 font-brand text-2xl text-inverse">
       {pathname === "/" && (
         <h1 className="grow font-brand text-4xl font-black">Knitr</h1>
       )}
