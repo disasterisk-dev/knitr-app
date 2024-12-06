@@ -1,52 +1,70 @@
 import { Link, useParams } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFile, faFloppyDisk, faPen } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../context/UserContext";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
+const materials = ["Acrylic", "Wool", "Merino"];
+const weights = ["DK", "Aran", "Baby", "Chunky"];
 
 const Project = () => {
+  const queryClient = useQueryClient();
   const { id } = useParams();
-  const {
-    projects,
-    fetchProject,
-    setProjects,
-    setActiveProject,
-    materials,
-    weights,
-  } = useProjectContext();
-  const { supabase } = useUserContext();
+  const { supabase, session } = useUserContext();
 
-  const [project, setProject] = useState();
   const [notes, setNotes] = useState("");
   const [progress, setProgress] = useState(0);
   const [changes, setChanges] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+
+  const {
+    data: project,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["activeProject"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select()
+        .eq("owner", session.user.id)
+        .eq("id", id);
+
+      return data[0];
+    },
+  });
+
+  const { data: imgUrl } = useQuery({
+    queryKey: ["imgUrl" + id],
+    queryFn: async () => {
+      if (!project.thumbnailUrl) return Error();
+
+      const { data, error } = await supabase.storage
+        .from("thumbnails")
+        .createSignedUrl("/" + project.thumbnailUrl, 3600);
+
+      if (error) return error;
+
+      return data.signedUrl;
+    },
+    enabled: !!project,
+  });
 
   useEffect(() => {
-    setIsLoading(true);
-    if (projects.length == 0) {
-      fetchProject(id).then((p) => {
-        setProjects(p);
-        setIsLoading(false);
-      });
-    }
-
-    let p = projects.filter((p) => p.id == id);
-    setProject(p[0]);
-    setActiveProject(p[0]);
-
     if (!project) return;
 
     if (project.notes) {
       setNotes(project.notes);
+    } else {
+      setNotes("");
     }
 
     if (project.progress) {
       setProgress(project.progress);
     }
-  }, [id, projects, project, fetchProject, setActiveProject, setProjects]);
+  }, [project]);
 
   async function handleSave() {
     const { error } = await supabase
@@ -76,13 +94,17 @@ const Project = () => {
 
   return (
     <>
+      {isError && <p>Something went wrong: {error}</p>}
       {isLoading && !project && <LoadingSpinner />}
       {project && (
         <>
           <section className="flex grow flex-col gap-4">
             <div className="flex gap-2">
               <div>
-                <img src="https://dummyjson.com/image/150" alt="" />
+                {isLoading && (
+                  <img src="https://dummyjson.com/image/150" alt="" />
+                )}
+                {imgUrl && <img className="max-w-24" src={imgUrl} alt="" />}
               </div>
               <div className="flex grow flex-col gap-2">
                 <h2 className="text-2xl font-bold">{project.title}</h2>
@@ -128,7 +150,7 @@ const Project = () => {
                 setNotes(e.target.value);
                 checkChanges();
               }}
-              className="grow resize-none overflow-y-auto rounded-inner bg-inverse-subtle p-2"
+              className="grow resize-none overflow-y-auto rounded-inner bg-inverse-subtle p-2 outline-none"
               name=""
               id=""
               placeholder="Write notes about this project here..."
@@ -144,14 +166,16 @@ const Project = () => {
                 <FontAwesomeIcon icon={faFloppyDisk} />
                 Save Changes
               </button>
-              <a
-                className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
-                href={project.link}
-                target="_blank"
-              >
-                <FontAwesomeIcon icon={faFile} />
-                Pattern
-              </a>
+              {project.pattern && (
+                <a
+                  className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"
+                  href={project.link}
+                  target="_blank"
+                >
+                  <FontAwesomeIcon icon={faFile} />
+                  Pattern
+                </a>
+              )}
               <Link
                 to={"/draw/" + project.id}
                 className="flex flex-1 grow items-center justify-center gap-2 rounded-inner bg-brand-200 p-2 text-center font-brand text-white"

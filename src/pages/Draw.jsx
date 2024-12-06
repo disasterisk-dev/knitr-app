@@ -1,7 +1,6 @@
 import { useState, useEffect, createRef } from "react";
 import { useParams } from "react-router-dom";
 import { ReactSketchCanvas } from "react-sketch-canvas";
-import { useProjectContext } from "../context/ProjectsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEraser,
@@ -10,17 +9,12 @@ import {
   faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../context/UserContext";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Draw = () => {
   const { id } = useParams();
-  const {
-    activeProject,
-    setActiveProject,
-    projects,
-    fetchProject,
-    setProjects,
-  } = useProjectContext();
-  const { supabase } = useUserContext();
+  const { supabase, session } = useUserContext();
 
   const [height, setHeight] = useState(300);
   const [strokeWidth, setStrokeWidth] = useState(5);
@@ -29,41 +23,38 @@ const Draw = () => {
   const [canvasData, setCanvasData] = useState();
 
   const canvasRef = createRef();
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["activeProject"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select()
+        .eq("owner", session.user.id)
+        .eq("id", id);
+
+      return data[0];
+    },
+  });
 
   useEffect(() => {
-    if (projects.length == 0) {
-      fetchProject(id).then((d) => {
-        setProjects(d);
-      });
+    if (!data) return;
+
+    if (!strokeColor) {
+      setStrokeColor(data.colors[0]);
     }
 
-    let p = projects.filter((p) => p.id == id);
-    setActiveProject(p[0]);
+    const getHeight = document
+      .getElementById("canvas-container")
+      .getBoundingClientRect().height;
+    setHeight(getHeight);
 
-    if (activeProject) {
-      if (!strokeColor) {
-        setStrokeColor(activeProject.colors[0]);
-      }
-
-      const getHeight = document
-        .getElementById("canvas-container")
-        .getBoundingClientRect().height;
-      setHeight(getHeight);
-
-      if (activeProject.canvasData) {
-        const data = JSON.parse(activeProject.canvasData);
-        canvasRef.current.loadPaths(data);
-      }
+    if (data.canvasData) {
+      const drawData = JSON.parse(data.canvasData);
+      canvasRef.current.loadPaths(drawData);
     }
-  }, [
-    activeProject,
-    projects,
-    id,
-    canvasRef,
-    fetchProject,
-    setActiveProject,
-    setProjects,
-  ]);
+  }, [data]);
 
   function handleErase() {
     setErase(erase ? false : true);
@@ -78,7 +69,7 @@ const Draw = () => {
       const { error } = await supabase
         .from("projects")
         .update({ canvasData })
-        .eq("id", activeProject.id);
+        .eq("id", data.id);
 
       if (error) {
         console.log(error);
@@ -88,7 +79,8 @@ const Draw = () => {
 
   return (
     <>
-      {activeProject && (
+      {isLoading && <LoadingSpinner />}
+      {data && (
         <div className="flex grow flex-col gap-2">
           <div className="grow" id="canvas-container">
             <ReactSketchCanvas
@@ -145,7 +137,7 @@ const Draw = () => {
             </button>
           </div>
           <div className="absolute right-4 top-1/2 flex flex-col gap-2">
-            {activeProject.colors.map((c) => (
+            {data.colors.map((c) => (
               <button
                 key={c}
                 onClick={() => setStrokeColor(c)}

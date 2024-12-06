@@ -6,18 +6,26 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useProjectContext } from "../context/ProjectsContext";
 import { useUserContext } from "../context/UserContext";
+import { v4 as uuid } from "uuid";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const { deleteProject } = useProjectContext();
   const { supabase, session } = useUserContext();
 
-  function handleCancelCreate(e) {
+  async function handleCancelCreate(e) {
     e.preventDefault();
     let check = confirm("Do you want to discard this project?");
+
+    const id = pathname.split("/")[2];
+    const { data, error } = await supabase.storage
+      .from("thumbnails")
+      .remove([session.user.id + "/" + id]);
+
+    if (error) {
+      console.log(error);
+    }
 
     if (check) navigate("/");
   }
@@ -25,11 +33,18 @@ const Navbar = () => {
   async function handleDeleteProject(e) {
     e.preventDefault();
     const id = pathname.split("/")[2];
-    console.log(id);
 
     if (!confirm("Do you want to permanently delete this project?")) return;
 
-    deleteProject();
+    const { data, error } = await supabase.storage
+      .from("thumbnails")
+      .remove([session.user.id + "/" + id]);
+
+    if (error) {
+      console.log(error);
+    }
+
+    const response = await supabase.from("projects").delete().eq("id", id);
 
     navigate("/");
   }
@@ -43,13 +58,13 @@ const Navbar = () => {
   }
 
   return (
-    <header className="sticky top-0 flex gap-2 bg-brand-300 p-4 font-brand text-2xl text-inverse">
+    <header className="sticky top-0 z-50 flex w-full gap-2 bg-brand-300 p-4 font-brand text-2xl text-inverse">
       {pathname === "/" && (
         <h1 className="grow font-brand text-4xl font-black">Knitr</h1>
       )}
       {session && pathname === "/" && (
         <>
-          <Link to={"/create"} className="flex items-center">
+          <Link to={"/create/" + uuid()} className="flex items-center">
             <FontAwesomeIcon icon={faPlus} />
           </Link>
           <button onClick={handleSignOut}>
@@ -57,7 +72,7 @@ const Navbar = () => {
           </button>
         </>
       )}
-      {session && pathname === "/create" && (
+      {session && pathname.split("/")[1] === "create" && (
         <button
           onClick={handleCancelCreate}
           className="flex items-center gap-1"

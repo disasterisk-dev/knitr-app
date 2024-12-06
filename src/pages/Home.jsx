@@ -1,28 +1,38 @@
-import { useProjectContext } from "../context/ProjectsContext";
 import { useEffect, useState } from "react";
 import ProjectCard from "../components/ProjectCard";
 import GetStarted from "../components/GetStarted";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUserContext } from "../context/UserContext";
 
 const Home = () => {
-  const { projects, setProjects, fetchProjectsAll } = useProjectContext();
-  const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { supabase, session } = useUserContext();
 
-  useEffect(() => {
-    fetchProjectsAll().then((p) => {
-      setProjects(p);
-      setIsLoading(false);
-    });
-  }, [fetchProjectsAll, setProjects]);
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["projects"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("projects")
+        .select("id, created_at, title, colors, thumbnailUrl, progress")
+        .eq("owner", session.user.id)
+        .order("progress");
+
+      if (data.length == 0) return null;
+
+      return data;
+    },
+  });
 
   return (
     <>
       <section className="flex h-full grow flex-col items-stretch gap-4">
-        {projects.length == 0 && !isLoading && <GetStarted />}
-        {isLoading && <LoadingSpinner />}
-        {projects && (
+        {isError && <p>Something went wrong: {error.message}</p>}
+        {!data && !isLoading && <GetStarted />}
+        {!data && isLoading && <LoadingSpinner />}
+        {data && (
           <>
-            {projects.map((p) => (
+            {data.map((p) => (
               <ProjectCard project={p} key={p.id} />
             ))}
           </>
