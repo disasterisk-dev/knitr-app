@@ -7,15 +7,25 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
+import { v4 as uuid } from "uuid";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { supabase, session } = useUserContext();
 
-  function handleCancelCreate(e) {
+  async function handleCancelCreate(e) {
     e.preventDefault();
     let check = confirm("Do you want to discard this project?");
+
+    const id = pathname.split("/")[2];
+    const { data, error } = await supabase.storage
+      .from("thumbnails")
+      .remove([session.user.id + "/" + id]);
+
+    if (error) {
+      console.log(error);
+    }
 
     if (check) navigate("/");
   }
@@ -23,9 +33,16 @@ const Navbar = () => {
   async function handleDeleteProject(e) {
     e.preventDefault();
     const id = pathname.split("/")[2];
-    console.log(id);
 
     if (!confirm("Do you want to permanently delete this project?")) return;
+
+    const { data, error } = await supabase.storage
+      .from("thumbnails")
+      .remove([session.user.id + "/" + id]);
+
+    if (error) {
+      console.log(error);
+    }
 
     const response = await supabase.from("projects").delete().eq("id", id);
 
@@ -47,7 +64,7 @@ const Navbar = () => {
       )}
       {session && pathname === "/" && (
         <>
-          <Link to={"/create"} className="flex items-center">
+          <Link to={"/create/" + uuid()} className="flex items-center">
             <FontAwesomeIcon icon={faPlus} />
           </Link>
           <button onClick={handleSignOut}>
@@ -55,7 +72,7 @@ const Navbar = () => {
           </button>
         </>
       )}
-      {session && pathname === "/create" && (
+      {session && pathname.split("/")[1] === "create" && (
         <button
           onClick={handleCancelCreate}
           className="flex items-center gap-1"

@@ -1,10 +1,9 @@
 import { useState, useRef } from "react";
 import { useUserContext } from "../context/UserContext";
-import { v4 as uuid } from "uuid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingSpinner from "./LoadingSpinner";
 
-const ImageUpload = ({ url, setUrl }) => {
+const ImageUpload = ({ url, setUrl, uuid }) => {
   const [image, setImage] = useState("");
   const imgRef = useRef(null);
   const { supabase, session } = useUserContext();
@@ -16,10 +15,12 @@ const ImageUpload = ({ url, setUrl }) => {
 
     const { data, error } = await supabase.storage
       .from("thumbnails")
-      .upload(session.user.id + "/" + uuid(), uploaded, {
+      .upload(session.user.id + "/" + uuid, uploaded, {
         cacheControl: "3600",
-        upsert: false,
+        upsert: true,
       });
+
+    console.log();
 
     if (error) {
       console.log(error);

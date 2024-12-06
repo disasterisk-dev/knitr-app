@@ -45,7 +45,7 @@ function App() {
           {session && (
             <Routes>
               <Route exact path="/" element={<Home />} />
-              <Route exact path="/create" element={<Create />} />
+              <Route exact path="/create/:id" element={<Create />} />
               <Route exact path="/project/:id" element={<Project />} />
               <Route exact path="/draw/:id" element={<Draw />} />
             </Routes>

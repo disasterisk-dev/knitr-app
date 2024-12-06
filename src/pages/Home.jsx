@@ -14,8 +14,11 @@ const Home = () => {
     queryFn: async () => {
       const { data } = await supabase
         .from("projects")
-        .select()
-        .eq("owner", session.user.id);
+        .select("id, created_at, title, colors, thumbnailUrl, progress")
+        .eq("owner", session.user.id)
+        .order("progress");
+
+      if (data.length == 0) return null;
 
       return data;
     },
@@ -27,7 +30,7 @@ const Home = () => {
         {isError && <p>Something went wrong: {error.message}</p>}
         {!data && !isLoading && <GetStarted />}
         {!data && isLoading && <LoadingSpinner />}
-        {data && data.length > 0 && (
+        {data && (
           <>
             {data.map((p) => (
               <ProjectCard project={p} key={p.id} />

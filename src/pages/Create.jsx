@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import ColorPicker from "../components/ColorPicker";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 import ImageUpload from "../components/ImageUpload";
 
@@ -14,6 +14,8 @@ const Create = () => {
   const [material, setMaterial] = useState(0);
   const [weight, setWeight] = useState(0);
   const [colors, setColors] = useState([]);
+
+  const { id } = useParams();
 
   const { supabase, session } = useUserContext();
   const navigate = useNavigate();
@@ -31,6 +33,7 @@ const Create = () => {
     }
 
     const newProject = {
+      id,
       owner: session.user.id,
       title,
       link,
@@ -73,7 +76,7 @@ const Create = () => {
           className="rounded-inner border-2 bg-inverse-subtle px-2 py-2 outline-none focus:border-brand-500"
         />
 
-        <ImageUpload url={thumbnailUrl} setUrl={setThumbnailUrl} />
+        <ImageUpload url={thumbnailUrl} setUrl={setThumbnailUrl} uuid={id} />
 
         <div className="flex gap-4">
           <div className="flex grow flex-col">
