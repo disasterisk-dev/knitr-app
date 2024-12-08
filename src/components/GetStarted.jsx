@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMitten } from "@fortawesome/free-solid-svg-icons";
+import { v4 as uuid } from "uuid";
 
 const GetStarted = () => {
   return (
@@ -13,7 +14,10 @@ const GetStarted = () => {
         <h2 className="text-center font-brand text-3xl font-semibold text-subtle">
           Welcome to Knitr!
         </h2>
-        <Link className="text-center text-brand-400 underline" to={"/create"}>
+        <Link
+          className="text-center text-brand-400 underline"
+          to={"/create/" + uuid()}
+        >
           Get started
         </Link>
       </div>
