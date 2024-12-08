@@ -15,31 +15,31 @@ export default defineConfig({
         description: "A knitting project management app",
         icons: [
           {
-            src: "knitr-192x192.png",
+            src: "maskable_icon_x192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "favicon",
           },
           {
-            src: "knitr-512x512.png",
+            src: "maskable_icon_x192.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "favicon",
           },
           {
-            src: "knitr-192x192.png",
+            src: "maskable_icon_x192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any maskable",
           },
           {
-            src: "knitr-512x512.png",
+            src: "maskable_icon_x512.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
           },
           {
-            src: "knitr-180x180.png",
+            src: "maskable_icon_x180.png",
             sizes: "180x180",
             type: "image/png",
             purpose: "apple touch icon",
