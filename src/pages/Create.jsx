@@ -44,7 +44,7 @@ const Create = () => {
     };
 
     try {
-      const { error } = await supabase.from("projects").insert(newProject);
+      const { error } = await supabase.from("projects").insert(newProject, {returning: "minimal"});
 
       if (error) throw Error(error);
     } catch (e) {
