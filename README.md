@@ -1,6 +1,6 @@
-# Knitr
+# Knitr PWA
 
-Knitr is a Progressive Web App powered by React and Supabase.
+I built Knitr for my partner, who knits for hours every day and wanted an all-in-one solution to keeping track of patterns, stitch counts and designs.
 
 ### Attributions
 
